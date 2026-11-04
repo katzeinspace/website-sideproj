@@ -1,0 +1,52 @@
+@startuml
+title domain model
+
+class User {
+  - userId : UUID
+  - displayName : String
+  --
+  + sendMessage(content: String) : Message
+  + viewOwnMessages() : List<Message>
+}
+
+class Owner {
+  - adminToken : String
+  --
+  + viewAllMessages(filter: ReplyStatus) : List<Message>
+  + replyTo(message: Message, content: String) : Reply
+}
+
+class Message {
+  - id : UUID
+  - content : String
+  - createdAt : DateTime
+  - status : ReplyStatus
+  --
+  + isReplied() : Boolean
+  + attachReply(reply: Reply) : void
+}
+
+class Reply {
+  - content : String
+  - repliedAt : DateTime
+  --
+  + isPublished() : Boolean
+}
+
+enum ReplyStatus {
+  UNREPLIED
+  REPLIED
+}
+
+
+
+'========================
+' RELAÇÕES
+'========================
+
+User "1" --> "*" Message : sends >
+Owner "1" --> "*" Message : manages >
+Message "0..1" --> "1" Reply : has > 
+Message --> ReplyStatus : has >
+
+@enduml
